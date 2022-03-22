@@ -2,6 +2,13 @@ ESX = nil
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
+Citizen.CreateThread(function()
+	while ESX == nil do
+		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+		Citizen.Wait(0)
+	end
+end)
+
 RegisterNetEvent('tpmenu:open')
 AddEventHandler('tpmenu:open', function()
 	OtvoriLokacije()
@@ -178,9 +185,8 @@ AddEventHandler("tpmenu:open", function()
 end)
 
 --------------------------------------------------------------------------
-ESX = nil
 
-local playerData 				= {}
+local playerData   = {}
 local nevidljivost = false
 
 function OtvoriAdminMeni()
@@ -194,11 +200,9 @@ function OtvoriAdminMeni()
     title    = 'Admin Meni | 🔑',
     align    = 'top-left',
     elements = {
-      --{label = 'Stvori Vozilo | 🚗', value = 'vozilo'},
       {label = 'Stvori Vozilo | 🚗', value = 'vozilo'},
       {label = 'Lokacije | 💍', value = 'lokacije'},
       {label = 'Nevidljivost | 🌟', value = 'nevidljivost'},
-      {label = 'Motor | 🛵', value = 'adminmeni'},
       {label = 'Admin auto | 🛵', value = 'adminauto'},
       {label = 'Posmatraj | 🔭', value = 'posmatraj'},
       {label = 'Obrisi Vozilo | 🚗', value = 'dv'},
@@ -217,7 +221,7 @@ function OtvoriAdminMeni()
         local id = UnosTastatura('ID', '', 100)
 
         if vozilo ~= nil and id ~= nil then
-            TriggerServerEvent('Neon:stvoriVozilo', id, vozilo)
+            TriggerServerEvent('Dior:stvoriVozilo', id, vozilo)
         else
             ESX.ShowNotification('Prekinuo si radnju')
         end
@@ -236,16 +240,27 @@ function OtvoriAdminMeni()
 
     if data.current.value == 'zaledi' then
       local id = UnosTastatura('ID', '', 100)
+	  local player1 = PlayerId()
+	  local ime = GetPlayerName(player1)
+	  local imedrugogigraca = GetPlayerName(closestPlayer)
       if id ~= nil then
-          TriggerServerEvent('Neon:zaledi', GetPlayerServerId(PlayerId()), id)
+          TriggerServerEvent('Dior:zaledi', GetPlayerServerId(PlayerId()), id)
+		  local menilogovi = 'Igrac '.. ime ..' je odledio igraca '.. imedrugogigraca ..' '
+		  TriggerServerEvent('meni:log', menilogovi)
       else
           ESX.ShowNotification('Prekinuo si radnju')
       end
     end
     if data.current.value == 'odledi' then
       local id = UnosTastatura('ID', '', 100)
+	  local player1 = PlayerId()
+	  local ime = GetPlayerName(player1)
+	  local imedrugogigraca = GetPlayerName(closestPlayer)
+						
       if id ~= nil then
-          TriggerServerEvent('Neon:odledi', GetPlayerServerId(PlayerId()), id)
+          TriggerServerEvent('Dior:odledi', GetPlayerServerId(PlayerId()), id)
+		  local menilogovi = 'Igrac '.. ime ..' je zaledio igraca '.. imedrugogigraca ..' '
+		  TriggerServerEvent('meni:log', menilogovi)
       else
           ESX.ShowNotification('Prekinuo si radnju')
       end
@@ -256,11 +271,6 @@ function OtvoriAdminMeni()
         ESX.UI.Menu.CloseAll()
       end 
 
-      if data.current.value == 'adminmeni' then
-        TriggerEvent('esx:spawnVehicle', 'blista2')
-        ESX.UI.Menu.CloseAll()
-      end
-
       if data.current.value == 'adminauto' then
         TriggerEvent('esx:spawnVehicle', 'admin')
         ESX.UI.Menu.CloseAll()
@@ -270,15 +280,24 @@ function OtvoriAdminMeni()
         TriggerEvent('esx_spectate:spectate')
       end
       if data.current.value == 'clean' then
-      TriggerEvent('Neon_repair:ocisti')
+      TriggerEvent('Dior_repair:ocisti')
       end
 
       if data.current.value == 'dv' then
+		local player1 = PlayerId()
+		local ime = GetPlayerName(player1)
         TriggerEvent('esx:deleteVehicle')
+		local menilogovi = 'Igrac '.. ime ..' je popravio obrisao auto'
+		TriggerServerEvent('meni:log', menilogovi)
       end
 
       if data.current.value == 'fix' then
-        TriggerEvent('Neon_repair:popravi')
+		local player1 = PlayerId()
+		local ime = GetPlayerName(player1)
+		local imedrugogigraca = GetPlayerName(closestPlayer)
+        TriggerEvent('Dior_repair:popravi')
+		local menilogovi = 'Igrac '.. ime ..' je popravio auto igracu '.. imedrugogigraca ..' '
+		TriggerServerEvent('meni:log', menilogovi)
       end
   end,
     function(data, menu)
@@ -287,31 +306,80 @@ function OtvoriAdminMeni()
   )
 end
 
-RegisterNetEvent('Neon:zalediCl')
-AddEventHandler('Neon:zalediCl', function()
+RegisterNetEvent('Dior_repair:popravi')
+AddEventHandler('Dior_repair:popravi', function()
+  local playerPed = GetPlayerPed(-1)
+  if IsPedInAnyVehicle(playerPed, false) then
+    local vehicle = GetVehiclePedIsIn(playerPed, false)
+    SetVehicleEngineHealth(vehicle, 1000)
+    SetVehicleEngineOn( vehicle, true, true )
+    SetVehicleFixed(vehicle)
+    exports['okokNotify']:Alert("FIX", "Vozilo je popravljeno!", 5009, 'success')
+  else
+    exports['okokNotify']:Alert("FIX", "Ne nalazite se u vozilu!", 5009, 'error')
+  end
+end)
+
+RegisterNetEvent('Dior_repair:ocisti')
+AddEventHandler('Dior_repair:ocisti', function()
+  local playerPed = GetPlayerPed(-1)
+  if IsPedInAnyVehicle(playerPed, false) then
+    local vehicle = GetVehiclePedIsIn(playerPed, false)
+    SetVehicleDirtLevel(vehicle, 0)
+    exports['okokNotify']:Alert("CISCENJE", "Vozilo je očiščeno!", 5009, 'success')
+  else
+    exports['okokNotify']:Alert("CISCENJE", "Ne nalazite se u vozilu!", 5009, 'error')
+  end
+end)
+
+RegisterNetEvent('Dior_repair:nemasDozvolu')
+AddEventHandler('Dior_repair:nemasDozvolu', function()
+  exports['okokNotify']:Alert("Error", "Nemas dozvolu za tu komandu!", 5009, 'error')
+end)
+
+function notification(msg)
+  SetNotificationTextEntry("STRING")
+  AddTextComponentString(msg)
+  DrawNotification(false, false)
+end
+
+RegisterNetEvent('Dior:zalediCl')
+AddEventHandler('Dior:zalediCl', function()
     FreezeEntityPosition(PlayerPedId(), true)
 end)
 
 
-RegisterNetEvent('Neon:odlediCl')
-AddEventHandler('Neon:odlediCl', function()
+RegisterNetEvent('Dior:odlediCl')
+AddEventHandler('Dior:odlediCl', function()
     FreezeEntityPosition(PlayerPedId(), false)
 end)
 
-RegisterNetEvent("Neon_sistem:admin")
-AddEventHandler("Neon_sistem:admin", function()
+RegisterNetEvent("Dior_sistem:admin")
+AddEventHandler("Dior_sistem:admin", function()
+	 local player1 = PlayerId()
+	 local ime = GetPlayerName(player1)
+	 local menilogovi = 'Igrac '.. ime ..' je otvorio Admin meni'
+	 TriggerServerEvent('meni:log', menilogovi)
       OtvoriAdminMeni()
 end)
 
 RegisterCommand('adminmeni',function()
-  TriggerServerEvent('Neon_sistem:admin')
+  TriggerServerEvent('Dior_sistem:admin')
 end,false)
 
 RegisterKeyMapping('adminmeni', 'Admin Meni', 'keyboard', 'F9')
 
-Citizen.CreateThread(function()
-	while ESX == nil do
-		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-		Citizen.Wait(0)
-	end
-end)
+UnosTastatura = function(TextEntry, ExampleText, MaxStringLength)
+    AddTextEntry("FMMC_KEY_TIP1", TextEntry .. ":")
+    DisplayOnscreenKeyboard(1, "FMMC_KEY_TIP1", "", ExampleText, "", "", "", MaxStringLength)
+    while UpdateOnscreenKeyboard() ~= 1 and UpdateOnscreenKeyboard() ~= 2 do
+        DisableAllControlActions(0)
+        if IsDisabledControlPressed(0, 322) then return "" end
+        Wait(0)
+    end
+    if (GetOnscreenKeyboardResult()) then
+      print(GetOnscreenKeyboardResult())
+      return GetOnscreenKeyboardResult()
+    end
+end
+
