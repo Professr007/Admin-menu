@@ -9,12 +9,16 @@ Citizen.CreateThread(function()
 	end
 end)
 
-RegisterNetEvent('tpmenu:open')
-AddEventHandler('tpmenu:open', function()
-	OtvoriLokacije()
+RegisterNetEvent("tpmenu:open")
+AddEventHandler("tpmenu:open", function()
+  ESX.TriggerServerCallback("esx_marker:fetchUserRank", function(playerRank)
+    if playerRank == "moderator" or playerRank == "admin" or playerRank == "superadmin" then
+      	OtvoriLokacije()
+	else
+		Esx.ShowNotification("Nemas permisije!")
+    end
+  end)
 end)
-
-
 
 function OtvoriLokacije()
 	local playerPed = PlayerPedId()
@@ -47,17 +51,17 @@ function OtvoriLokacije()
 	}, function(data, menu)
 		local type = data.current.value
 
-		if type == 'banka' then
+		if type == 'ostrvo' then
+		ESX.Game.Teleport(playerPed, {
+			x = 4448.17,
+			y = -4483.71,
+			z = 4.23
+		})
+		elseif type == 'banka' then
 			ESX.Game.Teleport(playerPed, {
 				x = 226.61,
 				y = 207.43,
 				z = 105.51
-			})
-		elseif type == 'ostrvo' then
-			ESX.Game.Teleport(playerPed, {
-				x = 4448.17,
-				y = -4483.71,
-				z = 4.23
 			})
 		elseif type == 'autosalon' then
 			ESX.Game.Teleport(playerPed, {
@@ -172,25 +176,17 @@ function OtvoriLokacije()
 		menu.close()
 	end)
 end
-
-
-RegisterNetEvent("tpmenu:open")
-AddEventHandler("tpmenu:open", function()
-  ESX.TriggerServerCallback("esx_marker:fetchUserRank", function(playerRank)
-    if playerRank == "moderator" or playerRank == "admin1" or playerRank == "admin2" or playerRank == "admin3" or playerRank == "superadmin" or playerRank == "skripter" or playerRank == "direktor"  or playerRank == "suvlasnik"  or playerRank == "vlasnik" then
-      OtvoriLokacije()
-    else
-    end
-  end)
-end)
-
---------------------------------------------------------------------------
-
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
 local playerData   = {}
 local nevidljivost = false
 
 function OtvoriAdminMeni()
-
   ESX.UI.Menu.CloseAll()
 
   ESX.UI.Menu.Open(
@@ -211,31 +207,32 @@ function OtvoriAdminMeni()
       {label = 'Freeze | 🥶', value = 'zaledi'},
       {label = 'Unfreeze | 🥶', value = 'odledi'},
     }
-  },
-
-    
-    function(data, menu)
+},
+function(data, menu)
 
       if data.current.value == 'vozilo' then
-        local vozilo = UnosTastatura('Ime Vozila', 'Upisi Tekst', 100)
+        local vozilo = UnosTastatura('Ime Vozila', '', 100)
         local id = UnosTastatura('ID', '', 100)
 
         if vozilo ~= nil and id ~= nil then
-            TriggerServerEvent('Dior:stvoriVozilo', id, vozilo)
+            TriggerServerEvent('ludijutuber:stvoriVozilo', id, vozilo)
         else
             ESX.ShowNotification('Prekinuo si radnju')
         end
       end 
       if data.current.value == 'nevidljivost' then
-        if nevidljivost == false then
-          SetEntityVisible(GetPlayerPed(-1), false)
-          exports['okokNotify']:Alert("Nevidljivost", "Nevidjlivost je uključena!", 5000, 'info')
-          nevidljivost = true
+		if nevidljivost == false then
+          SetEntityVisible(PlayerPedId(), false, 0)
+		  ESX.ShowNotification('Nevidjlivost je uključena')
+		  nevidljivost = true
+		  print("Nevidljiv")
+
         else
-          SetEntityVisible(GetPlayerPed(-1), true)
-          exports['okokNotify']:Alert("Nevidljivost", "Nevidjlivost je isključena!", 5000, 'info')
+          SetEntityVisible(PlayerPedId(), true, 0)
+		  ESX.ShowNotification('Nevidjlivost je isključena')
           nevidljivost = false
-        end
+		  print("Vidljiv")
+		end
       end
 
     if data.current.value == 'zaledi' then
@@ -244,12 +241,8 @@ function OtvoriAdminMeni()
 	  local ime = GetPlayerName(player1)
 	  local imedrugogigraca = GetPlayerName(closestPlayer)
       if id ~= nil then
-          TriggerServerEvent('Dior:zaledi', GetPlayerServerId(PlayerId()), id)
-		  local menilogovi = 'Igrac '.. ime ..' je odledio igraca '.. imedrugogigraca ..' '
-		  TriggerServerEvent('meni:log', menilogovi)
-      else
-          ESX.ShowNotification('Prekinuo si radnju')
-      end
+		FreezeEntityPosition(PlayerPedId(), true)
+		end
     end
     if data.current.value == 'odledi' then
       local id = UnosTastatura('ID', '', 100)
@@ -258,15 +251,11 @@ function OtvoriAdminMeni()
 	  local imedrugogigraca = GetPlayerName(closestPlayer)
 						
       if id ~= nil then
-          TriggerServerEvent('Dior:odledi', GetPlayerServerId(PlayerId()), id)
-		  local menilogovi = 'Igrac '.. ime ..' je zaledio igraca '.. imedrugogigraca ..' '
-		  TriggerServerEvent('meni:log', menilogovi)
-      else
-          ESX.ShowNotification('Prekinuo si radnju')
-      end
+		FreezeEntityPosition(PlayerPedId(), false)
+		end
     end
+
       if data.current.value == 'lokacije' then
-        TriggerEvent('tpmenu:open')
         OtvoriLokacije()
         ESX.UI.Menu.CloseAll()
       end 
@@ -279,26 +268,19 @@ function OtvoriAdminMeni()
       if data.current.value == 'posmatraj' then
         TriggerEvent('esx_spectate:spectate')
       end
+
       if data.current.value == 'clean' then
-      TriggerEvent('Dior_repair:ocisti')
+      	TriggerEvent('ludijutuber_repair:ocisti')
       end
 
       if data.current.value == 'dv' then
-		local player1 = PlayerId()
-		local ime = GetPlayerName(player1)
         TriggerEvent('esx:deleteVehicle')
-		local menilogovi = 'Igrac '.. ime ..' je popravio obrisao auto'
-		TriggerServerEvent('meni:log', menilogovi)
       end
 
       if data.current.value == 'fix' then
-		local player1 = PlayerId()
-		local ime = GetPlayerName(player1)
-		local imedrugogigraca = GetPlayerName(closestPlayer)
-        TriggerEvent('Dior_repair:popravi')
-		local menilogovi = 'Igrac '.. ime ..' je popravio auto igracu '.. imedrugogigraca ..' '
-		TriggerServerEvent('meni:log', menilogovi)
+        TriggerEvent('ludijutuber:popravi')
       end
+
   end,
     function(data, menu)
       menu.close()
@@ -306,66 +288,31 @@ function OtvoriAdminMeni()
   )
 end
 
-RegisterNetEvent('Dior_repair:popravi')
-AddEventHandler('Dior_repair:popravi', function()
-  local playerPed = GetPlayerPed(-1)
+RegisterNetEvent('ludijutuber:popravi')
+AddEventHandler('ludijutuber:popravi', function()
+  local playerPed = PlayerPedId()
   if IsPedInAnyVehicle(playerPed, false) then
     local vehicle = GetVehiclePedIsIn(playerPed, false)
     SetVehicleEngineHealth(vehicle, 1000)
     SetVehicleEngineOn( vehicle, true, true )
     SetVehicleFixed(vehicle)
-    exports['okokNotify']:Alert("FIX", "Vozilo je popravljeno!", 5009, 'success')
+	ESX.ShowNotification('Vozilo je popravljeno!')
   else
-    exports['okokNotify']:Alert("FIX", "Ne nalazite se u vozilu!", 5009, 'error')
+	ESX.ShowNotification('Ne nalazite se u vozilu!')
   end
 end)
 
-RegisterNetEvent('Dior_repair:ocisti')
-AddEventHandler('Dior_repair:ocisti', function()
-  local playerPed = GetPlayerPed(-1)
+RegisterNetEvent('ludijutuber:ocisti')
+AddEventHandler('ludijutuber:ocisti', function()
+  local playerPed = PlayerPedId()
   if IsPedInAnyVehicle(playerPed, false) then
     local vehicle = GetVehiclePedIsIn(playerPed, false)
     SetVehicleDirtLevel(vehicle, 0)
-    exports['okokNotify']:Alert("CISCENJE", "Vozilo je očiščeno!", 5009, 'success')
+	ESX.ShowNotification('Vozilo je očiščeno!')
   else
-    exports['okokNotify']:Alert("CISCENJE", "Ne nalazite se u vozilu!", 5009, 'error')
+	ESX.ShowNotification('Ne nalazite se u vozilu!')
   end
 end)
-
-RegisterNetEvent('Dior_repair:nemasDozvolu')
-AddEventHandler('Dior_repair:nemasDozvolu', function()
-  exports['okokNotify']:Alert("Error", "Nemas dozvolu za tu komandu!", 5009, 'error')
-end)
-
-function notification(msg)
-  SetNotificationTextEntry("STRING")
-  AddTextComponentString(msg)
-  DrawNotification(false, false)
-end
-
-RegisterNetEvent('Dior:zalediCl')
-AddEventHandler('Dior:zalediCl', function()
-    FreezeEntityPosition(PlayerPedId(), true)
-end)
-
-
-RegisterNetEvent('Dior:odlediCl')
-AddEventHandler('Dior:odlediCl', function()
-    FreezeEntityPosition(PlayerPedId(), false)
-end)
-
-RegisterNetEvent("Dior_sistem:admin")
-AddEventHandler("Dior_sistem:admin", function()
-	 local player1 = PlayerId()
-	 local ime = GetPlayerName(player1)
-	 local menilogovi = 'Igrac '.. ime ..' je otvorio Admin meni'
-	 TriggerServerEvent('meni:log', menilogovi)
-      OtvoriAdminMeni()
-end)
-
-RegisterCommand('adminmeni',function()
-  TriggerServerEvent('Dior_sistem:admin')
-end,false)
 
 RegisterKeyMapping('adminmeni', 'Admin Meni', 'keyboard', 'F9')
 
@@ -383,3 +330,7 @@ UnosTastatura = function(TextEntry, ExampleText, MaxStringLength)
     end
 end
 
+RegisterCommand('adminmeni',function()
+	OtvoriAdminMeni()
+	print("otvorio")
+end)
