@@ -180,6 +180,7 @@ AddEventHandler("tpmenu:open", function()
     if playerRank == "moderator" or playerRank == "admin1" or playerRank == "admin2" or playerRank == "admin3" or playerRank == "superadmin" or playerRank == "skripter" or playerRank == "direktor"  or playerRank == "suvlasnik"  or playerRank == "vlasnik" then
       OtvoriLokacije()
     else
+	ESX.ShowNotification('Nemate permisije!') // Notifikacija mjenjate po zelji				
     end
   end)
 end)
@@ -228,12 +229,12 @@ function OtvoriAdminMeni()
       end 
       if data.current.value == 'nevidljivost' then
         if nevidljivost == false then
-          SetEntityVisible(GetPlayerPed(-1), false)
-          exports['okokNotify']:Alert("Nevidljivost", "Nevidjlivost je uključena!", 5000, 'info')
+          SetEntityVisible(PlayerPedId(), false)
+		ESX.ShowNotification('Nevidjlivost je uključena!') // Notifikacija mjenjate po zelji
           nevidljivost = true
         else
-          SetEntityVisible(GetPlayerPed(-1), true)
-          exports['okokNotify']:Alert("Nevidljivost", "Nevidjlivost je isključena!", 5000, 'info')
+          SetEntityVisible(PlayerPedId(), true)		
+		ESX.ShowNotification('Nevidjlivost je isključena!') // Notifikacija mjenjate po zelji
           nevidljivost = false
         end
       end
@@ -314,9 +315,9 @@ AddEventHandler('Dior_repair:popravi', function()
     SetVehicleEngineHealth(vehicle, 1000)
     SetVehicleEngineOn( vehicle, true, true )
     SetVehicleFixed(vehicle)
-    exports['okokNotify']:Alert("FIX", "Vozilo je popravljeno!", 5009, 'success')
+	ESX.ShowNotification("Vozilo je popravljeno!")
   else
-    exports['okokNotify']:Alert("FIX", "Ne nalazite se u vozilu!", 5009, 'error')
+	ESX.ShowNotification("Ne nalazite se u vozilu!")
   end
 end)
 
@@ -326,15 +327,15 @@ AddEventHandler('Dior_repair:ocisti', function()
   if IsPedInAnyVehicle(playerPed, false) then
     local vehicle = GetVehiclePedIsIn(playerPed, false)
     SetVehicleDirtLevel(vehicle, 0)
-    exports['okokNotify']:Alert("CISCENJE", "Vozilo je očiščeno!", 5009, 'success')
-  else
-    exports['okokNotify']:Alert("CISCENJE", "Ne nalazite se u vozilu!", 5009, 'error')
+	ESX.ShowNotification("Vozilo je očiščeno!")
+  else	
+	ESX.ShowNotification("Ne nalazite se u vozilu!")
   end
 end)
 
 RegisterNetEvent('Dior_repair:nemasDozvolu')
 AddEventHandler('Dior_repair:nemasDozvolu', function()
-  exports['okokNotify']:Alert("Error", "Nemas dozvolu za tu komandu!", 5009, 'error')
+	ESX.ShowNotification("Nemas dozvolu za tu komandu!")
 end)
 
 function notification(msg)
