@@ -23,29 +23,29 @@ end)
 function OtvoriLokacije()
 	local playerPed = PlayerPedId()
 	local elements = {
-		{label = 'Ostrvo |🌴',  value = 'ostrvo'},
-		{label = 'Banka | 💲',   value = 'banka'},
-		{label = 'Auto Salon | 🚗',  value = 'autosalon'},
-		{label = 'Opstina | 🌇',  value = 'opstina'},
-		{label = 'Auto Skola | 🏫',  value = 'askola'},
-		{label = 'Ikea | 🛒',  value = 'ikea'},
-		{label = 'Sud | ⚖️',  value = 'sud'},
-		{label = 'Zatvor | 🚨',  value = 'zatvor'},
-		{label = 'Markeri | 🧹',  value = 'markeri'},
-		{label = 'Groblje | ⚰️',  value = 'groblje'},
-		{label = 'A Garaza | 🏬',  value = 'agaraza'},
-		{label = 'B Garaza | 🏬',  value = 'bgaraza'},
-		{label = 'C Garaza | 🏬',  value = 'cgaraza'},
-		{label = 'D Garaza | 🏬',  value = 'dgaraza'},
-		{label = 'E Garaza | 🏬',  value = 'egaraza'},
-		{label = 'F Garaza | 🏬',  value = 'fgaraza'},
-		{label = 'G Garaza | 🏬',  value = 'ggaraza'},
-		{label = 'H Garaza | 🏬',  value = 'hgaraza'},
+		{label = 'Ostrvo |đźŚ´',  value = 'ostrvo'},
+		{label = 'Banka | đź’˛',   value = 'banka'},
+		{label = 'Auto Salon | đźš—',  value = 'autosalon'},
+		{label = 'Opstina | đźŚ‡',  value = 'opstina'},
+		{label = 'Auto Skola | đźŹ«',  value = 'askola'},
+		{label = 'Ikea | đź›’',  value = 'ikea'},
+		{label = 'Sud | âš–ď¸Ź',  value = 'sud'},
+		{label = 'Zatvor | đźš¨',  value = 'zatvor'},
+		{label = 'Markeri | đź§ą',  value = 'markeri'},
+		{label = 'Groblje | âš°ď¸Ź',  value = 'groblje'},
+		{label = 'A Garaza | đźŹ¬',  value = 'agaraza'},
+		{label = 'B Garaza | đźŹ¬',  value = 'bgaraza'},
+		{label = 'C Garaza | đźŹ¬',  value = 'cgaraza'},
+		{label = 'D Garaza | đźŹ¬',  value = 'dgaraza'},
+		{label = 'E Garaza | đźŹ¬',  value = 'egaraza'},
+		{label = 'F Garaza | đźŹ¬',  value = 'fgaraza'},
+		{label = 'G Garaza | đźŹ¬',  value = 'ggaraza'},
+		{label = 'H Garaza | đźŹ¬',  value = 'hgaraza'},
 	}
 	ESX.UI.Menu.CloseAll()
 
 	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'tpmenu_actions', {
-		title    = 'Lokacije | 📁',
+		title    = 'Lokacije | đź“',
 		align    = 'bottom-right',
 		elements = elements
 	}, function(data, menu)
@@ -193,19 +193,19 @@ function OtvoriAdminMeni()
   'default', GetCurrentResourceName(), 'admin_meni',
   {
     css      = 'meni',
-    title    = 'Admin Meni | 🔑',
+    title    = 'Admin Meni | đź”‘',
     align    = 'top-left',
     elements = {
-      {label = 'Stvori Vozilo | 🚗', value = 'vozilo'},
-      {label = 'Lokacije | 💍', value = 'lokacije'},
-      {label = 'Nevidljivost | 🌟', value = 'nevidljivost'},
-      {label = 'Admin auto | 🛵', value = 'adminauto'},
-      {label = 'Posmatraj | 🔭', value = 'posmatraj'},
-      {label = 'Obrisi Vozilo | 🚗', value = 'dv'},
-      {label = 'Popravi | 🔧', value = 'fix'},
-      {label = 'Ocisti | 🧽', value = 'clean'},
-      {label = 'Freeze | 🥶', value = 'zaledi'},
-      {label = 'Unfreeze | 🥶', value = 'odledi'},
+      {label = 'Stvori Vozilo | đźš—', value = 'vozilo'},
+      {label = 'Lokacije | đź’Ť', value = 'lokacije'},
+      {label = 'Nevidljivost | đźŚź', value = 'nevidljivost'},
+      {label = 'Admin auto | đź›µ', value = 'adminauto'},
+      {label = 'Posmatraj | đź”­', value = 'posmatraj'},
+      {label = 'Obrisi Vozilo | đźš—', value = 'dv'},
+      {label = 'Popravi | đź”§', value = 'fix'},
+      {label = 'Ocisti | đź§˝', value = 'clean'},
+      {label = 'Freeze | đźĄ¶', value = 'zaledi'},
+      {label = 'Unfreeze | đźĄ¶', value = 'odledi'},
     }
 },
 function(data, menu)
@@ -223,13 +223,13 @@ function(data, menu)
       if data.current.value == 'nevidljivost' then
 		if nevidljivost == false then
           SetEntityVisible(PlayerPedId(), false, 0)
-		  ESX.ShowNotification('Nevidjlivost je uključena')
+		  ESX.ShowNotification('Nevidjlivost je ukljuÄŤena')
 		  nevidljivost = true
 		  print("Nevidljiv")
 
         else
           SetEntityVisible(PlayerPedId(), true, 0)
-		  ESX.ShowNotification('Nevidjlivost je isključena')
+		  ESX.ShowNotification('Nevidjlivost je iskljuÄŤena')
           nevidljivost = false
 		  print("Vidljiv")
 		end
@@ -308,7 +308,7 @@ AddEventHandler('ludijutuber:ocisti', function()
   if IsPedInAnyVehicle(playerPed, false) then
     local vehicle = GetVehiclePedIsIn(playerPed, false)
     SetVehicleDirtLevel(vehicle, 0)
-	ESX.ShowNotification('Vozilo je očiščeno!')
+	ESX.ShowNotification('Vozilo je oÄŤiĹˇÄŤeno!')
   else
 	ESX.ShowNotification('Ne nalazite se u vozilu!')
   end
@@ -330,7 +330,12 @@ UnosTastatura = function(TextEntry, ExampleText, MaxStringLength)
     end
 end
 
+RegisterNetEvent("professr:admin")
+AddEventHandler("professr:admin", function()
+      OtvoriAdminMeni()
+end)
+
 RegisterCommand('adminmeni',function()
-	OtvoriAdminMeni()
+	TriggerServerEvent('professr:admin')
 	print("otvorio")
 end)
